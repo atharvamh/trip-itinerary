@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <title>Kerala, October 2026</title>
 <style>
 
@@ -19,21 +22,34 @@
     --chili-soft: #FBDDCC;
     --line: #ECDFB8;
     --line-soft: #F4EBD3;
+    --sea: #2A7AA8;
+    --sea-ink: #1B5375;
+    --sea-soft: #DDEAF3;
+    --indigo: #16358F;
+    --indigo-soft: #E2E7F8;
+    --indigo-line: #C7D1EE;
+
+    --font-sans: 'Trebuchet MS', 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Lora', serif;
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
 
   body{
     margin:0; padding:0;
     background: var(--paper);
     color: var(--ink);
-    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    font-family: var(--font-serif);
     line-height: 1.4;
   }
 
-  .sans{ font-family: 'Trebuchet MS', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-  .head-font{ font-family: 'Trebuchet MS', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  .sans{ font-family: var(--font-sans); }
+  .head-font{ font-family: var(--font-sans); }
 
   .wrap{ max-width: 760px; margin: 0 auto; padding: 0 24px; }
 
@@ -41,41 +57,99 @@
   .daynav{
     position: sticky;
     top: 0;
-    z-index: 10;
-    background: rgba(255,248,232,0.95);
-    backdrop-filter: blur(4px);
-    border-bottom: 2px solid var(--leaf-soft);
+    z-index: 20;
+    background: rgba(255,248,232,0.93);
+    backdrop-filter: saturate(1.4) blur(8px);
+    -webkit-backdrop-filter: saturate(1.4) blur(8px);
+    border-bottom: 1px solid var(--line);
+    transition: box-shadow 0.22s ease;
   }
+  .daynav.is-stuck{ box-shadow: 0 10px 22px -16px rgba(27,43,30,0.55); }
+
   .daynav .wrap{
     display:flex;
-    gap: 8px;
+    align-items: center;
+    gap: 6px;
     overflow-x: auto;
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding-top: 9px;
+    padding-bottom: 9px;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
   .daynav .wrap::-webkit-scrollbar{ display:none; }
+
+  /* edge fades: shown only on a side that still has hidden pills */
+  .daynav::before, .daynav::after{
+    content:"";
+    position:absolute;
+    top: 0; bottom: 1px;
+    width: 40px;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .daynav::before{ left: 0; background: linear-gradient(90deg, var(--paper) 25%, rgba(255,248,232,0) 100%); }
+  .daynav::after{ right: 0; background: linear-gradient(270deg, var(--paper) 25%, rgba(255,248,232,0) 100%); }
+  .daynav.can-left::before{ opacity: 1; }
+  .daynav.can-right::after{ opacity: 1; }
+
   .daynav a{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
-    font-size: 12px;
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
     font-weight: 700;
     color: var(--leaf-deep);
     text-decoration: none;
     white-space: nowrap;
-    padding: 6px 13px;
+    padding: 6px 12px;
     border-radius: 999px;
-    background: var(--leaf-soft);
+    border: 1.5px solid var(--line);
+    background: var(--panel);
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
-  .daynav a:nth-child(3n+2){ background: var(--turmeric-soft); color: #8A5A17; }
-  .daynav a:nth-child(3n+3){ background: var(--chili-soft); color: #A6391A; }
-  .daynav a:hover{ filter: brightness(0.94); }
+  .daynav a:hover{ border-color: var(--leaf); background: var(--leaf-soft); }
+  .daynav a:focus-visible{ outline: 2px solid var(--turmeric); outline-offset: 2px; }
+
+  .nav-date{ font-size: 11px; color: var(--leaf); opacity: 0.8; }
+
+  .daynav a.is-active{ background: var(--leaf); border-color: var(--leaf); color: #fff; }
+  .daynav a.is-active .nav-date{ color: #fff; opacity: 0.72; }
+
+  .nav-sep{ flex: none; width: 1px; height: 18px; background: var(--line); margin: 0 5px; }
+
+  .daynav a.nav-chk{ background: var(--turmeric-soft); border-color: #F0D7A8; color: #8A5A17; }
+  .daynav a.nav-chk:hover{ background: var(--turmeric-soft); border-color: var(--turmeric); }
+  .daynav a.nav-chk.is-active{ background: var(--turmeric); border-color: var(--turmeric); color: #43290A; }
+
+  .nav-badge{
+    display: inline-block;
+    min-width: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--chili);
+    color: #fff;
+    font-size: 10px;
+    line-height: 15px;
+    text-align: center;
+  }
+  .nav-badge.all-done{ background: var(--leaf); }
+
+  @media (max-width: 560px){
+    .daynav .wrap{ gap: 5px; }
+    .daynav a{ font-size: 11.5px; padding: 6px 10px; gap: 5px; }
+    .nav-date{ font-size: 10px; }
+  }
 
   /* ---------- HERO ---------- */
   .hero{ padding: 52px 0 40px 0; }
 
   .eyebrow{
     display: inline-block;
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -87,7 +161,7 @@
   }
 
   .hero h1{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 48px;
     line-height: 1.06;
     margin: 0 0 6px 0;
@@ -99,7 +173,7 @@
   .title-swash{ display:block; width: 190px; height: auto; margin: 6px 0 4px 0; }
 
   .hero .dates{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 14.5px;
     font-weight: 700;
     color: var(--leaf);
@@ -117,7 +191,7 @@
   }
 
   .map-label{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -126,37 +200,195 @@
   }
 
   .route-caption{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 12px;
     font-weight: 700;
     color: var(--leaf-deep);
-    opacity: 0.75;
-    margin-top: 10px;
-    display:flex;
-    justify-content: space-between;
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  /* plain captions stay muted; chips carry their own colour */
+  .route-caption > span:not(.rc-item){ opacity: 0.75; }
+  .rc-item{
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--leaf-deep);
+    background: var(--leaf-soft);
+    border-radius: 999px;
+    padding: 4px 11px;
+  }
+  .rc-item b{ font-weight: 700; }
+  .rc-item span{ opacity: 0.62; font-weight: 700; margin-left: 4px; }
+  .rc-item.rc-out{ background: var(--turmeric-soft); color: #8A5A17; }
+
+  /* ---------- trip logistics ---------- */
+  .logi{ margin-top: 36px; }
+
+  .logi-flights{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
   }
 
-  .facts{
-    margin-top: 36px;
-    display:grid;
+  .fcard{
+    background: var(--panel);
+    border: 2px solid var(--indigo-line);
+    border-radius: 14px;
+    padding: 14px 16px 15px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fcard::before{
+    content:"";
+    position:absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 5px;
+  }
+  .fcard::before{ background: var(--indigo); }
+
+  .fcard-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .fdir{
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .fdir{ background: var(--indigo); color: #fff; }
+  .fcode{
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--indigo);
+    opacity: 0.72;
+    white-space: nowrap;
+  }
+
+  .froute{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 11px;
+  }
+  .fapt{ display: flex; flex-direction: column; flex: none; }
+  .fapt b{
+    font-family: var(--font-sans);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--indigo);
+  }
+  .fapt span{
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    color: var(--ink);
+    opacity: 0.55;
+    margin-top: 2px;
+  }
+  .farrow{
+    flex: 1;
+    min-width: 22px;
+    height: 1px;
+    background: var(--indigo-line);
+    position: relative;
+    align-self: flex-start;
+    margin-top: 10px;
+  }
+  .farrow::after{
+    content:"";
+    position: absolute;
+    right: 0;
+    top: -3.5px;
+    border-left: 6px solid var(--indigo);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+
+  .fwhen{
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-sans);
+    margin-bottom: 12px;
+  }
+  .fdate{ font-size: 11.5px; font-weight: 700; color: var(--indigo); }
+  .ftime{ font-size: 14px; font-weight: 700; color: var(--ink); }
+  .fdur{
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink);
+    opacity: 0.5;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+
+  .fpnr{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px dashed var(--indigo-line);
+    padding-top: 11px;
+  }
+  .fpnr-label{
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    color: var(--indigo);
+    opacity: 0.8;
+  }
+  .fpnr code{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--indigo);
+    background: var(--indigo-soft);
+    border: 1px solid var(--indigo-line);
+    border-radius: 6px;
+    padding: 2px 9px;
+    letter-spacing: 0.1em;
+    -webkit-user-select: all;
+    user-select: all;
+  }
+
+  .logi-facts{
+    display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px 24px;
+    gap: 14px 24px;
+    margin-top: 14px;
     background: var(--panel);
     border: 2px solid var(--line);
-    border-radius: 16px;
-    padding: 22px 24px;
+    border-radius: 14px;
+    padding: 16px 18px;
   }
-  @media (max-width: 560px){ .facts{ grid-template-columns: 1fr; } }
+
+  @media (max-width: 560px){
+    .logi-flights{ grid-template-columns: 1fr; }
+    .logi-facts{ grid-template-columns: 1fr; }
+  }
 
   .fact-label{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 10.5px;
     font-weight: 700;
     color: var(--leaf);
     margin: 0 0 3px 0;
   }
   .fact-value{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 13.5px;
     color: var(--ink);
     margin: 0;
@@ -171,7 +403,7 @@
   }
 
   .day-strip{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 13px;
     color: var(--ink);
     line-height: 2.1;
@@ -205,7 +437,7 @@
   .day-head .titleblock{ display:flex; align-items:center; gap: 14px; }
 
   .day-badge{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 15px;
     font-weight: 700;
     color: #fff;
@@ -217,7 +449,7 @@
   }
 
   .day-head .dnum{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 11.5px;
     font-weight: 700;
     letter-spacing: 0.03em;
@@ -226,7 +458,7 @@
   }
 
   .day-head h2{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 27px;
     margin: 0;
     color: var(--leaf-deep);
@@ -234,7 +466,7 @@
   }
 
   .day-head .theme{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 12px;
     font-weight: 700;
     color: #8A5A17;
@@ -244,11 +476,11 @@
   }
 
   .transit-note{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 12.5px;
-    color: #A6391A;
-    background: var(--chili-soft);
-    border-left: 4px solid var(--chili);
+    color: var(--sea-ink);
+    background: var(--sea-soft);
+    border-left: 4px solid var(--sea);
     border-radius: 0 10px 10px 0;
     padding: 11px 15px;
     margin: 0 0 26px 0;
@@ -256,14 +488,6 @@
   }
 
   .schedule{ position: relative; padding-left: 118px; }
-  @media (max-width: 520px){
-    .schedule{ padding-left: 0; }
-    .schedule::before{ display:none; }
-    .stop .time{ position: static; width:auto; text-align:left; margin-bottom: 4px; display:block; }
-    .stop::after{ left: -14px; }
-    .stop{ padding-left: 18px; border-left: 2px solid var(--leaf-soft); }
-  }
-
   .schedule::before{
     content:"";
     position:absolute;
@@ -283,7 +507,7 @@
     top: 1px;
     width: 90px;
     text-align: right;
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
     color: var(--leaf-deep);
@@ -303,15 +527,23 @@
   .stop:nth-of-type(3n+2)::after{ background: var(--turmeric); }
   .stop:nth-of-type(3n+3)::after{ background: var(--chili); }
 
-  .stop h3{ font-size: 16px; margin: 0 0 4px 0; color: var(--ink); font-weight: 700; font-family: 'Trebuchet MS', Arial, sans-serif; }
+  .stop h3{ font-size: 16px; margin: 0 0 4px 0; color: var(--ink); font-weight: 700; font-family: var(--font-sans); }
   .stop p{
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 13px;
     color: var(--ink);
     opacity: 0.78;
     margin: 0;
     line-height: 1.55;
     max-width: 90%;
+  }
+
+  @media (max-width: 520px){
+    .schedule{ padding-left: 0; }
+    .schedule::before{ display:none; }
+    .stop .time{ position: static; width:auto; text-align:left; margin-bottom: 4px; display:block; }
+    .stop::after{ left: -14px; }
+    .stop{ padding-left: 18px; border-left: 2px solid var(--leaf-soft); }
   }
 
   /* dinner box */
@@ -343,13 +575,13 @@
     flex-wrap: wrap;
     gap: 4px;
   }
-  .dine-box .dine-head h3{ font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 17px; color: var(--leaf-deep); margin: 0; font-weight: 700; }
-  .dine-box .dine-head span{ font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 11px; font-weight: 700; color: var(--ink); opacity: 0.55; }
+  .dine-box .dine-head h3{ font-family: var(--font-sans); font-size: 17px; color: var(--leaf-deep); margin: 0; font-weight: 700; }
+  .dine-box .dine-head span{ font-family: var(--font-sans); font-size: 11px; font-weight: 700; color: var(--ink); opacity: 0.55; }
 
   .dine-item{ margin-bottom: 14px; }
   .dine-item:last-child{ margin-bottom: 0; }
-  .dine-item .dname{ font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 17px; font-weight: 700; color: var(--ink); }
-  .dine-item .dtag{ font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-left: 7px; }
+  .dine-item .dname{ font-family: var(--font-sans); font-size: 17px; font-weight: 700; color: var(--ink); }
+  .dine-item .dtag{ font-family: var(--font-sans); font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-left: 7px; }
   .dine-item:nth-of-type(2) .dtag{ background: var(--chili-soft); color: #A6391A; }
   .dine-item:nth-of-type(3) .dtag{ background: var(--leaf-soft); color: var(--leaf-deep); }
   .dine-item:nth-of-type(4) .dtag{ background: var(--turmeric-soft); color: #8A5A17; }
@@ -357,13 +589,13 @@
   .dine-item .dtag.pay-hotel{ background: var(--turmeric-soft) !important; color: #8A5A17 !important; }
   .dine-item .dtag.urgent{ background: var(--chili-soft) !important; color: #A6391A !important; }
   .dine-item .dtag.book-ahead{ background: var(--turmeric-soft) !important; color: #8A5A17 !important; }
-  .dine-item p{ font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13.5px; color: var(--ink); opacity: 0.75; margin: 4px 0 0 0; line-height: 1.5; }
+  .dine-item p{ font-family: var(--font-sans); font-size: 13.5px; color: var(--ink); opacity: 0.75; margin: 4px 0 0 0; line-height: 1.5; }
 
   .hotel-facts{ margin: 8px 0 6px 0; }
   .hotel-facts .hf-row{
     display:flex;
     gap: 10px;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 14.5px;
     color: var(--ink);
     line-height: 1.8;
@@ -375,7 +607,7 @@
 
 
   .skip-note{
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 11.5px;
     color: var(--ink);
     opacity: 0.55;
@@ -385,9 +617,178 @@
     font-style: italic;
   }
 
+  /* ---------- action checklist ---------- */
+  .chk-box{
+    margin-top: 34px;
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    padding: 24px 24px 22px 24px;
+    background: var(--panel);
+    position: relative;
+    overflow: hidden;
+    scroll-margin-top: 60px;
+  }
+  .chk-box::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--leaf) 0%, var(--turmeric) 50%, var(--chili) 100%);
+  }
+
+  .chk-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .chk-head h3{ font-family: var(--font-sans); font-size: 17px; color: var(--leaf-deep); margin: 0; font-weight: 700; }
+  .chk-count{ font-family: var(--font-sans); font-size: 11px; font-weight: 700; color: var(--ink); opacity: 0.55; }
+  .chk-count strong{ color: var(--leaf); opacity: 1; }
+
+  .chk-bar{
+    height: 6px;
+    border-radius: 999px;
+    background: var(--line-soft);
+    margin: 12px 0 4px 0;
+    overflow: hidden;
+  }
+  .chk-bar-fill{
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--leaf) 0%, var(--turmeric) 100%);
+    transition: width 0.25s ease;
+  }
+
+  .chk-group{ margin-top: 20px; }
+  .chk-gtitle{
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--leaf);
+    margin: 0 0 8px 0;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--line);
+    display:flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .chk-emoji{ font-size: 14px; letter-spacing: 0; }
+
+  .chk-tag{
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    padding: 2px 9px;
+    border-radius: 999px;
+  }
+  .chk-tag.urgent{ background: var(--chili-soft); color: #A6391A; }
+  .chk-tag.ticket{ background: var(--turmeric-soft); color: #8A5A17; }
+  .chk-tag.call{ background: var(--leaf-soft); color: var(--leaf-deep); }
+
+  .chk-item{
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 9px 10px 9px 9px;
+    margin: 0 -10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .chk-item:hover{ background: var(--line-soft); }
+
+  .chk-item input{
+    appearance: none;
+    -webkit-appearance: none;
+    flex: none;
+    width: 19px;
+    height: 19px;
+    margin: 1px 0 0 0;
+    border: 2px solid var(--leaf);
+    border-radius: 6px;
+    background: var(--panel);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .chk-item input:checked{ background: var(--leaf); border-color: var(--leaf); }
+  .chk-item input:checked::after{
+    content:"";
+    position:absolute;
+    left: 4px; top: 0px;
+    width: 5px; height: 10px;
+    border: solid #fff;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(42deg);
+  }
+  .chk-item input:focus-visible{ outline: 2px solid var(--turmeric); outline-offset: 2px; }
+
+  .chk-text{ min-width: 0; }
+  .chk-name{
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    display: block;
+    line-height: 1.3;
+  }
+  .chk-note{
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink);
+    opacity: 0.75;
+    margin: 3px 0 0 0;
+    line-height: 1.5;
+  }
+  .chk-note{ display: block; }
+  .chk-sub{
+    display: block;
+    position: relative;
+    padding-left: 14px;
+    margin-top: 3px;
+  }
+  .chk-sub:first-of-type{ margin-top: 5px; }
+  .chk-sub::before{
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 8px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--turmeric);
+  }
+
+  .chk-item input:checked ~ .chk-text .chk-name{ text-decoration: line-through; opacity: 0.45; }
+  .chk-item input:checked ~ .chk-text .chk-note{ opacity: 0.38; }
+
+  .chk-reset{
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--leaf);
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 18px;
+    cursor: pointer;
+    text-decoration: underline;
+    opacity: 0.7;
+  }
+  .chk-reset:hover{ opacity: 1; }
+
   /* ---------- know before you go ---------- */
   .kbyg{ padding: 52px 0 80px 0; border-top: 3px solid var(--leaf-soft); }
-  .kbyg h2{ font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 24px; color: var(--leaf-deep); font-weight: 700; margin: 0 0 26px 0; }
+  .kbyg h2{ font-family: var(--font-sans); font-size: 24px; color: var(--leaf-deep); font-weight: 700; margin: 0 0 26px 0; }
 
   .tip{
     background: var(--panel);
@@ -402,11 +803,21 @@
   .tip:nth-of-type(5n+3){ border-left-color: var(--chili); }
   .tip:nth-of-type(5n+4){ border-left-color: var(--leaf); }
   .tip:nth-of-type(5n+5){ border-left-color: var(--turmeric); }
-  .tip h4{ font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 14.5px; margin: 0 0 5px 0; color: var(--ink); font-weight: 700; }
-  .tip p{ font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px; color: var(--ink); opacity: 0.78; margin: 0; line-height: 1.55; }
+  .tip h4{ font-family: var(--font-sans); font-size: 14.5px; margin: 0 0 5px 0; color: var(--ink); font-weight: 700; }
+  .tip p{ font-family: var(--font-sans); font-size: 13px; color: var(--ink); opacity: 0.78; margin: 0; line-height: 1.55; }
+
+  .kbyg-intro{
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--ink);
+    opacity: 0.7;
+    margin: -12px 0 24px 0;
+    line-height: 1.55;
+  }
+  .kbyg-intro a, .step-body a{ color: var(--leaf); font-weight: 700; }
 
   .foot{
-    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 700;
     color: var(--leaf);
@@ -418,14 +829,17 @@
 </head>
 <body>
 
-  <nav class="daynav">
+  <nav class="daynav" id="daynav" aria-label="Jump to a section">
     <div class="wrap sans">
-      <a href="#d1">Oct 2 · Munnar</a>
-      <a href="#d2">Oct 3 · Munnar</a>
-      <a href="#d3">Oct 4 · Thekkady</a>
-      <a href="#d4">Oct 5 · Alleppey</a>
-      <a href="#d5">Oct 6 · Kochi</a>
-      <a href="#d6">Oct 7 · Fly home</a>
+      <a href="#checklist" class="nav-chk">To&nbsp;do<span class="nav-badge" id="navBadge">9</span></a>
+      <span class="nav-sep" aria-hidden="true"></span>
+      <a href="#d1"><span class="nav-date">Oct 2</span><span class="nav-place">Munnar</span></a>
+      <a href="#d2"><span class="nav-date">Oct 3</span><span class="nav-place">Munnar</span></a>
+      <a href="#d3"><span class="nav-date">Oct 4</span><span class="nav-place">Thekkady</span></a>
+      <a href="#d4"><span class="nav-date">Oct 5</span><span class="nav-place">Alleppey</span></a>
+      <a href="#d5"><span class="nav-date">Oct 6</span><span class="nav-place">Kochi</span></a>
+      <a href="#d6"><span class="nav-date">Oct 7</span><span class="nav-place">Fly home</span></a>
+      <span class="nav-sep" aria-hidden="true"></span>
       <a href="#kbyg">Know before you go</a>
     </div>
   </nav>
@@ -459,17 +873,17 @@
           <!-- coastline wash -->
           <path d="M0,0 L118,0 C100,60 132,120 112,185 C94,245 126,300 108,400 L0,400 Z" fill="url(#seaFade)"/>
           <path d="M118,0 C100,60 132,120 112,185 C94,245 126,300 108,400" fill="none" stroke="#1C8A93" stroke-width="1" stroke-opacity="0.45"/>
-          <text x="46" y="196" font-family="Georgia, serif" font-style="italic" font-size="10.5" letter-spacing="0.04em" fill="#1C8A93" fill-opacity="0.65" text-anchor="middle" transform="rotate(-90 46 196)">Arabian Sea</text>
+          <text x="46" y="196" font-family="Georgia, Lora, serif" font-style="italic" font-size="10.5" letter-spacing="0.04em" fill="#1C8A93" fill-opacity="0.65" text-anchor="middle" transform="rotate(-90 46 196)">Arabian Sea</text>
 
           <!-- hill range hints -->
           <g fill="#1B7A43" fill-opacity="0.28">
             <path d="M478,58 l12,-20 l9,13 l11,-16 l12,23 z"/>
             <path d="M513,296 l11,-19 l9,12 l11,-15 l11,22 z"/>
           </g>
-          <text x="600" y="190" font-family="Georgia, serif" font-style="italic" font-size="10.5" letter-spacing="0.04em" fill="#1B7A43" fill-opacity="0.55" text-anchor="middle" transform="rotate(90 600 190)">Western Ghats</text>
+          <text x="600" y="190" font-family="Georgia, Lora, serif" font-style="italic" font-size="10.5" letter-spacing="0.04em" fill="#1B7A43" fill-opacity="0.55" text-anchor="middle" transform="rotate(90 600 190)">Western Ghats</text>
 
           <!-- compass rose -->
-          <g transform="translate(578,44)" font-family="Georgia, serif">
+          <g transform="translate(578,44)" font-family="Georgia, Lora, serif">
             <circle r="25" fill="none" stroke="#DCEEDD" stroke-width="1.4"/>
             <circle r="18" fill="none" stroke="#DCEEDD" stroke-width="0.8"/>
             <g stroke="#1B2B1E" stroke-opacity="0.35" stroke-width="0.8">
@@ -494,7 +908,7 @@
           <path d="M97,230 l-3,-9 l9,3 z" fill="#E4572E" transform="rotate(-10 100 228)"/>
 
           <!-- distance pills -->
-          <g font-family="Trebuchet MS, Arial, sans-serif" font-size="10" font-weight="700" fill="#8A5A17">
+          <g font-family="Trebuchet MS, Nunito Sans, Arial, sans-serif" font-size="10" font-weight="700" fill="#8A5A17">
             <rect x="263" y="88" width="105" height="18" rx="9" fill="#FBE6C2"/>
             <text x="315.5" y="100.5" text-anchor="middle">E/NE &middot; ~130 km</text>
 
@@ -521,7 +935,7 @@
           </g>
 
           <!-- place labels -->
-          <g font-family="Georgia, serif" font-size="14" fill="#1B2B1E">
+          <g font-family="Georgia, Lora, serif" font-size="14" fill="#1B2B1E">
             <text x="108.8" y="172" text-anchor="middle">Kochi</text>
             <text x="492.8" y="47" text-anchor="middle">Munnar</text>
             <text x="540.8" y="330" text-anchor="middle">Thekkady</text>
@@ -530,8 +944,10 @@
         </svg>
       </div>
       <div class="route-caption">
-        <span>Land at Cochin airport, 4:50 AM</span>
-        <span>Depart Cochin airport, 2:40 AM</span>
+        <span class="rc-item"><b>Munnar</b><span>2 nights</span></span>
+        <span class="rc-item"><b>Thekkady</b><span>1 night</span></span>
+        <span class="rc-item"><b>Alleppey</b><span>1 night</span></span>
+        <span class="rc-item rc-out"><b>Oct 6</b><span>no room &mdash; red-eye home</span></span>
       </div>
 
       <div class="map-frame" style="margin-top:20px;">
@@ -542,11 +958,48 @@
         </p>
       </div>
 
-      <div class="facts">
-        <div><p class="fact-label">Outbound flight</p><p class="fact-value">6E-6129 &middot; Pune &rarr; Kochi<br>Oct 2, Flight Time - <strong>3:05&ndash;4:50 AM</strong><br>PNR - <strong>FBQ4TW</strong></p></div>
-        <div><p class="fact-label">Return flight</p><p class="fact-value">6E-721 &middot; Kochi &rarr; Pune<br>Oct 7, Flight Time - <strong>2:40&ndash;4:25 AM</strong><br>PNR - <strong>BYCVUZ</strong></p></div>
-        <div><p class="fact-label">Getting around</p><p class="fact-value">One private car with driver, full trip</p></div>
-        <div><p class="fact-label">Total road distance</p><p class="fact-value">&asymp; 415 km across five driving legs</p></div>
+      <div class="logi">
+        <div class="logi-flights">
+        <div class="fcard out">
+          <div class="fcard-top">
+            <span class="fdir">Outbound</span>
+            <span class="fcode">IndiGo 6E-6129</span>
+          </div>
+          <div class="froute">
+            <span class="fapt"><b>PNQ</b><span>Pune</span></span>
+            <span class="farrow" aria-hidden="true"></span>
+            <span class="fapt"><b>COK</b><span>Kochi</span></span>
+          </div>
+          <div class="fwhen">
+            <span class="fdate">Fri, Oct 2</span>
+            <span class="ftime">3:05 &ndash; 4:50 AM</span>
+            <span class="fdur">1h 45m</span>
+          </div>
+          <div class="fpnr"><span class="fpnr-label">PNR</span><code>FBQ4TW</code></div>
+        </div>
+        <div class="fcard ret">
+          <div class="fcard-top">
+            <span class="fdir">Return</span>
+            <span class="fcode">IndiGo 6E-721</span>
+          </div>
+          <div class="froute">
+            <span class="fapt"><b>COK</b><span>Kochi</span></span>
+            <span class="farrow" aria-hidden="true"></span>
+            <span class="fapt"><b>PNQ</b><span>Pune</span></span>
+          </div>
+          <div class="fwhen">
+            <span class="fdate">Wed, Oct 7</span>
+            <span class="ftime">2:40 &ndash; 4:25 AM</span>
+            <span class="fdur">1h 45m</span>
+          </div>
+          <div class="fpnr"><span class="fpnr-label">PNR</span><code>BYCVUZ</code></div>
+        </div>
+        </div>
+
+        <div class="logi-facts">
+          <div><p class="fact-label">Getting around</p><p class="fact-value">One private car with driver, full trip</p></div>
+          <div><p class="fact-label">Total road distance</p><p class="fact-value">&asymp; 415 km across five driving legs</p></div>
+        </div>
       </div>
 
       <p class="summary-line">Five days, one loop &mdash; hills to wildlife to backwaters, back to the coast.</p>
@@ -558,28 +1011,93 @@
         <div><span class="dot"></span><span class="d">Oct 6</span>Cruise &middot; Folklore Museum &middot; Kathakali &middot; fly out</div>
       </div>
 
-      <div class="dine-box" style="margin-top:34px;">
-        <div class="dine-head">
-          <h3>Book these in advance</h3>
-          <span>4 tickets, 4 deadlines</span>
+      <div class="chk-box" id="checklist">
+        <div class="chk-head">
+          <h3>Before you go &mdash; what still needs doing</h3>
+          <span class="chk-count"><strong id="chkDone">0</strong> of <span id="chkTotal">9</span> done</span>
+        </div>
+        <div class="chk-bar"><div class="chk-bar-fill" id="chkFill"></div></div>
+
+        <div class="chk-group">
+          <p class="chk-gtitle"><span class="chk-emoji">&#128663;</span>Booking<span class="chk-tag urgent">genuinely urgent</span></p>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="car">
+          <span class="chk-text">
+            <span class="chk-name">Private car + driver for the whole trip</span>
+            <span class="chk-note">Every single day&rsquo;s timing depends on this &mdash; worth locking in early, not last-minute. Standard practice in Kerala rather than a luxury: point-to-point taxis aren&rsquo;t reliable once you&rsquo;re outside the cities.</span>
+          </span>
+        </label>
         </div>
 
-        <div class="dine-item">
-          <span class="dname">Eravikulam National Park &mdash; Oct 3</span><span class="dtag urgent">most urgent</span>
-          <p>Daily entry is capped (historically ~750 online tickets/day), and Oct 3 is a Saturday &mdash; higher demand. Book via eravikulam.org, ideally 2&ndash;5 days ahead. Carry the same ID used at booking; it's checked on arrival.</p>
+        <div class="chk-group">
+          <p class="chk-gtitle"><span class="chk-emoji">&#127915;</span>Tickets<span class="chk-tag ticket">book ahead</span></p>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="eravikulam">
+          <span class="chk-text">
+            <span class="chk-name">Eravikulam National Park &mdash; Oct 3</span>
+            <span class="chk-note">Daily entry is capped (historically ~750 online tickets/day), and Oct 3 is a Saturday &mdash; higher demand. Book via eravikulam.org, ideally 2&ndash;5 days ahead. Carry the same ID used at booking; it&rsquo;s checked on arrival.</span>
+          </span>
+        </label>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="periyar">
+          <span class="chk-text">
+            <span class="chk-name">Periyar Boat Safari &mdash; Oct 4</span>
+            <span class="chk-note">3:30&ndash;5:00 PM slot. Private vehicles park at Anavachal (4 km from the boat landing, reached by Forest Dept shuttle) &mdash; report at the counter <strong>1 hour before</strong> departure. Book through the Kerala Forest Department/KTDC counter or website ahead of arrival.</span>
+          </span>
+        </label>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="kalari">
+          <span class="chk-text">
+            <span class="chk-name">Kalaripayattu Show, Thekkady &mdash; Oct 4</span>
+            <span class="chk-note">Kadathanadan Kalari Centre in Kumily &mdash; shows can sell out in October. Reserve a few days ahead rather than walking in.</span>
+          </span>
+        </label>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="kathakali">
+          <span class="chk-text">
+            <span class="chk-name">Kathakali Performance, Fort Kochi &mdash; Oct 6</span>
+            <span class="chk-note">Kerala Kathakali Centre, 6:00&ndash;7:00 PM &mdash; the whole late-afternoon plan is built around this fixed slot, so a firm booking matters more here than usual.</span>
+          </span>
+        </label>
         </div>
-        <div class="dine-item">
-          <span class="dname">Periyar Boat Safari &mdash; Oct 4</span><span class="dtag book-ahead">book ahead</span>
-          <p>3:30&ndash;5:00 PM slot. Private vehicles park at Anavachal (4 km from the boat landing, reached by Forest Dept shuttle) &mdash; report at the counter <strong>1 hour before</strong> departure. Book directly through the Kerala Forest Department/KTDC counter or website ahead of arrival.</p>
+
+        <div class="chk-group">
+          <p class="chk-gtitle"><span class="chk-emoji">&#128676;</span>Confirmation with Deshadan<span class="chk-tag call">one call</span></p>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="cruise">
+          <span class="chk-text">
+            <span class="chk-name">Private day cruise &mdash; Oct 6</span>
+            <span class="chk-note">Confirm on one call:<span class="chk-sub">Private boat &mdash; not a shared seat</span><span class="chk-sub">Exact start time</span><span class="chk-sub">Total price</span><span class="chk-sub">Whether lunch is included</span><span class="chk-sub">Pickup timing, given Muhamma&rsquo;s distance</span></span>
+          </span>
+        </label>
         </div>
-        <div class="dine-item">
-          <span class="dname">Kalaripayattu Show, Thekkady &mdash; Oct 4</span><span class="dtag book-ahead">book ahead</span>
-          <p>Kadathanadan Kalari Centre in Kumily &mdash; shows can sell out in October. Reserve a few days ahead rather than walking in.</p>
+
+        <div class="chk-group">
+          <p class="chk-gtitle"><span class="chk-emoji">&#128222;</span>Other confirmations</p>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="keysprima">
+          <span class="chk-text">
+            <span class="chk-name">Keys Prima &mdash; early check-in for Oct 4</span>
+            <span class="chk-note">You arrive in Thekkady well before the standard check-in window.</span>
+          </span>
+        </label>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="latecheckout">
+          <span class="chk-text">
+            <span class="chk-name">Deshadan &mdash; late checkout / luggage storage for Oct 6</span>
+            <span class="chk-note">There&rsquo;s no booked room for Oct 6 evening, so where the bags sit between checkout and the airport matters.</span>
+          </span>
+        </label>
+        <label class="chk-item">
+          <input type="checkbox" data-chk="shikara">
+          <span class="chk-text">
+            <span class="chk-name">Deshadan &mdash; sunset shikara: complimentary or paid?</span>
+            <span class="chk-note">Worth knowing before you&rsquo;re standing at the jetty deciding.</span>
+          </span>
+        </label>
         </div>
-        <div class="dine-item">
-          <span class="dname">Kathakali Performance, Fort Kochi &mdash; Oct 6</span><span class="dtag book-ahead">book ahead</span>
-          <p>Kerala Kathakali Centre, 6:00&ndash;7:00 PM &mdash; the whole late-afternoon plan is built around this fixed slot, so a firm booking matters more here than usual.</p>
-        </div>
+
+        <button class="chk-reset" id="chkReset" type="button">Reset checklist</button>
       </div>
     </section>
 
@@ -679,7 +1197,7 @@
         <div class="stop">
           <div class="time">8:00 &ndash; 10:30 AM</div>
           <h3>Eravikulam National Park (Rajamalai)</h3>
-          <p>Forest Dept mini-bus to the entry point, then either the senior electric buggy or a gentle 300&ndash;400 m stroll along the paved crest road &mdash; Nilgiri Tahr grazing against the backdrop of Anamudi peak. Tickets must be booked in advance (see the box above) &mdash; daily entry is capped and Saturdays draw more demand.</p>
+          <p>Forest Dept mini-bus to the entry point, then either the senior electric buggy or a gentle 300&ndash;400 m stroll along the paved crest road &mdash; Nilgiri Tahr grazing against the backdrop of Anamudi peak. Tickets must be booked in advance (see the <a href="#checklist">checklist</a>) &mdash; daily entry is capped and Saturdays draw more demand.</p>
         </div>
         <div class="stop">
           <div class="time">10:45 &ndash; 11:00 AM</div>
@@ -1040,16 +1558,7 @@
     <!-- ============ KNOW BEFORE YOU GO ============ -->
     <section class="kbyg" id="kbyg">
       <h2>Know before you go</h2>
-
-      <div class="tip">
-        <h4>Book the Periyar boat safari and Kalaripayattu tickets in advance</h4>
-        <p>Both can sell out, especially in October when tourist traffic picks up. Don't plan on walking in.</p>
-      </div>
-
-      <div class="tip">
-        <h4>One private car for the whole trip</h4>
-        <p>Standard practice in Kerala rather than a luxury &mdash; point-to-point taxis aren't reliable once you're outside the cities.</p>
-      </div>
+      <p class="kbyg-intro">Things to plan around rather than tick off &mdash; everything that needs booking or a phone call lives in the <a href="#checklist">checklist at the top</a>.</p>
 
       <div class="tip">
         <h4>Leave Munnar and Thekkady with a little extra time</h4>
@@ -1070,5 +1579,138 @@
     <div class="foot">Kerala &middot; October 2026 &middot; 4 travellers</div>
 
   </div>
+
+
+<script>
+(function(){
+  var KEY = 'kerala-oct2026-checklist';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.chk-item input[data-chk]'));
+  var doneEl = document.getElementById('chkDone');
+  var totalEl = document.getElementById('chkTotal');
+  var fillEl = document.getElementById('chkFill');
+  var resetEl = document.getElementById('chkReset');
+
+  if (totalEl) totalEl.textContent = boxes.length;
+
+  function load(){
+    try {
+      return JSON.parse(localStorage.getItem(KEY)) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function save(state){
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch (e) {
+      /* private window, blocked storage, file:// restrictions - checklist still works for this visit */
+    }
+  }
+
+  var badgeEl = document.getElementById('navBadge');
+
+  function render(){
+    var done = boxes.filter(function(b){ return b.checked; }).length;
+    var left = boxes.length - done;
+    if (doneEl) doneEl.textContent = done;
+    if (fillEl) fillEl.style.width = boxes.length ? (done / boxes.length * 100) + '%' : '0%';
+    if (badgeEl){
+      badgeEl.textContent = left ? left : '\u2713';
+      badgeEl.classList.toggle('all-done', left === 0);
+      badgeEl.setAttribute('aria-label', left ? left + ' still to do' : 'all done');
+    }
+  }
+
+  var state = load();
+  boxes.forEach(function(b){
+    if (state[b.getAttribute('data-chk')]) b.checked = true;
+    b.addEventListener('change', function(){
+      var s = load();
+      s[b.getAttribute('data-chk')] = b.checked;
+      save(s);
+      render();
+    });
+  });
+
+  if (resetEl) resetEl.addEventListener('click', function(){
+    boxes.forEach(function(b){ b.checked = false; });
+    save({});
+    render();
+  });
+
+  render();
+})();
+</script>
+
+<script>
+(function(){
+  var nav = document.getElementById('daynav');
+  if (!nav) return;
+  var rail = nav.querySelector('.wrap');
+  var links = Array.prototype.slice.call(rail.querySelectorAll('a[href^="#"]'));
+  var targets = links.map(function(a){
+    return { link: a, el: document.getElementById(a.getAttribute('href').slice(1)) };
+  }).filter(function(t){ return t.el; });
+  var current = null;
+
+  // fade only the side that still has pills hidden off-screen
+  function edges(){
+    var max = rail.scrollWidth - rail.clientWidth;
+    nav.classList.toggle('can-left', rail.scrollLeft > 4);
+    nav.classList.toggle('can-right', max > 4 && rail.scrollLeft < max - 4);
+  }
+
+  function centre(link){
+    var r = link.getBoundingClientRect(), rr = rail.getBoundingClientRect();
+    if (r.left < rr.left + 16 || r.right > rr.right - 16){
+      var to = rail.scrollLeft + (r.left - rr.left) - (rr.width - r.width) / 2;
+      if (rail.scrollTo) { rail.scrollTo({ left: to, behavior: 'smooth' }); }
+      else { rail.scrollLeft = to; }
+    }
+  }
+
+  function spy(){
+    nav.classList.toggle('is-stuck', window.pageYOffset > 8);
+    if (!targets.length) return;
+
+    var line = nav.offsetHeight + 48;
+    var best = targets[0];
+    for (var i = 0; i < targets.length; i++){
+      if (targets[i].el.getBoundingClientRect().top <= line) best = targets[i];
+    }
+    // at the very bottom the last section wins, however short it is
+    if (window.innerHeight + window.pageYOffset >= document.documentElement.scrollHeight - 4){
+      best = targets[targets.length - 1];
+    }
+    if (best.link === current) return;
+    if (current){ current.classList.remove('is-active'); current.removeAttribute('aria-current'); }
+    current = best.link;
+    current.classList.add('is-active');
+    current.setAttribute('aria-current', 'true');
+    centre(current);
+  }
+
+  var queued = false;
+  function flush(){
+    if (!queued) return;
+    queued = false;
+    spy();
+    edges();
+  }
+  function onScroll(){
+    if (queued) return;
+    queued = true;
+    if (window.requestAnimationFrame) requestAnimationFrame(flush);
+    setTimeout(flush, 120);   // backstop for when rAF is throttled
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  rail.addEventListener('scroll', edges, { passive: true });
+  spy();
+  edges();
+})();
+</script>
 </body>
 </html>
