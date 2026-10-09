@@ -27,7 +27,7 @@
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  .wrap{ max-width: 760px; margin: 0 auto; padding: 32px 20px 60px; }
+  .wrap{ max-width: 760px; margin: 0 auto; padding: 68px 20px 60px; }
 
   header{ text-align:center; margin-bottom: 36px; }
   header .eyebrow{
@@ -111,19 +111,63 @@
     margin-top: 48px; text-align:center; font-size: 12.5px; color: var(--ink); opacity: 0.5;
   }
 
+
+  .theme-toggle{
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    right: 12px;
+    z-index: 10;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 18px; line-height: 1;
+    cursor: pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 1px 4px rgba(43,36,32,0.15);
+  }
+  .theme-toggle:focus-visible{ outline: 2px solid var(--leaf); outline-offset: 2px; }
+  .back-link{
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    left: 12px;
+    z-index: 10;
+    height: 40px;
+    padding: 0 16px 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    font-size: 13px; font-weight: 700;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 1px 4px rgba(43,36,32,0.15);
+  }
+  .back-link:hover{ border-color: var(--leaf); }
+  .back-link:focus-visible{ outline: 2px solid var(--leaf); outline-offset: 2px; }
+
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       --cream:#201B15; --ink:#F3ECDF; --line:#3A3127;
     }
     :root:not([data-theme="light"]) .stop-card{ background:#2A241C; }
+    :root:not([data-theme="light"]) header h1,
+    :root:not([data-theme="light"]) .segment-title{ color:#7FD3A0; }
   }
   :root[data-theme="dark"]{
     --cream:#201B15; --ink:#F3ECDF; --line:#3A3127;
   }
   :root[data-theme="dark"] .stop-card{ background:#2A241C; }
+  :root[data-theme="dark"] header h1,
+  :root[data-theme="dark"] .segment-title{ color:#7FD3A0; }
 </style>
+<script>try{var _t=localStorage.getItem('kerala-theme')||localStorage.getItem('places-theme');if(_t==='light'||_t==='dark')document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
 <body>
+<a class="back-link" href="./" aria-label="Back to the itinerary">&larr; Itinerary</a>
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch between light and dark mode" title="Switch light/dark">&#9788;</button>
 <div class="wrap">
 
   <header>
@@ -391,5 +435,37 @@
   </footer>
 
 </div>
+<script>
+(function(){
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  function effective(){
+    var t = root.getAttribute('data-theme');
+    if (t === 'dark' || t === 'light') return t;
+    return (mq && mq.matches) ? 'dark' : 'light';
+  }
+  function paint(){
+    // Show the mode you would switch TO
+    btn.innerHTML = effective() === 'dark' ? '&#9788;' : '&#9790;';
+    btn.title = effective() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  }
+
+  try {
+    var saved = localStorage.getItem('kerala-theme') || localStorage.getItem('places-theme');
+    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  } catch (e) {}
+
+  btn.addEventListener('click', function(){
+    var next = effective() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('kerala-theme', next); } catch (e) {}
+    paint();
+  });
+
+  paint();
+})();
+</script>
 </body>
 </html>
